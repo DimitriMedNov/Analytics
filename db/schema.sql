@@ -20,7 +20,8 @@ SET default_table_access_method = heap;
 CREATE TABLE public.locations (
     id bigint NOT NULL,
     lat numeric(10,8),
-    long numeric(10,8)
+    long numeric(10,8),
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 );
 
 

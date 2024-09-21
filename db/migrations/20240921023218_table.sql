@@ -2,10 +2,9 @@
 CREATE TABLE IF NOT EXISTS locations (
     id BIGSERIAL PRIMARY KEY,
     lat NUMERIC(10, 8),
-    long NUMERIC(10, 8)
+    long NUMERIC(10, 8),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- migrate:down
 DROP TABLE IF EXISTS locations;
-
