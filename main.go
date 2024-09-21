@@ -1,6 +1,7 @@
 package main
 
 import (
+	"analytics/location"
 	"context"
 	"log"
 	"net/http"
@@ -11,15 +12,13 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-type Handler struct{ pool *pgxpool.Pool }
-
 func main() {
 	r := chi.NewRouter()
 	pool, err := pgxpool.New(context.Background(), os.Getenv("DATABASE_URL"))
 	if err != nil {
 		log.Fatal("Cant connect to the db")
 	}
-	h := Handler{pool}
-	r.Get("/test", h.LocationHandler)
+	h := location.Handler{Pool: pool}
+	r.Post("/test", h.LocationHandler)
 	http.ListenAndServe("localhost:8000", r)
 }

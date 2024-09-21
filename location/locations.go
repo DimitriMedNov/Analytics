@@ -1,14 +1,18 @@
-package main
+package location
 
 import (
 	"encoding/json"
 	"net/http"
+
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type locationInput struct {
 	Lat  float64 `json:"lat"`
 	Long float64 `json:"long"`
 }
+
+type Handler struct{ Pool *pgxpool.Pool }
 
 func (h Handler) LocationHandler(w http.ResponseWriter, r *http.Request) {
 	var input locationInput
