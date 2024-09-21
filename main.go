@@ -22,5 +22,9 @@ func main() {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 	r.Post("/test", h.LocationHandler)
-	http.ListenAndServe("localhost:8000", r)
+	log.Printf("Listening on http://localhost:8000")
+	err = http.ListenAndServe("localhost:8000", r)
+	if err != nil {
+		log.Println(err)
+	}
 }
