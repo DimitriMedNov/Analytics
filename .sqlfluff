@@ -1,0 +1,5 @@
+[sqlfluff]
+dialect = postgresql
+
+[sqlfluff:rules]
+tab_space_size = 4

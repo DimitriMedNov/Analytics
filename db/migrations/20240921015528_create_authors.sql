@@ -1,10 +1,9 @@
 -- migrate:up
-CREATE TABLE IF NOT EXISTS authors (
-                                       id   BIGSERIAL PRIMARY KEY,
-                                       name text      NOT NULL,
-                                       bio  text
+CREATE TABLE IF NOT EXISTS users (
+    id BIGSERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    admin BOOL DEFAULT false
 );
 
 -- migrate:down
-
-drop TABLE IF EXISTS authors;
+DROP TABLE IF EXISTS users;
