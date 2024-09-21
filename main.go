@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
-
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -19,6 +19,8 @@ func main() {
 		log.Fatal("Cant connect to the db")
 	}
 	h := location.Handler{Pool: pool}
+	r.Use(middleware.Logger)
+	r.Use(middleware.Recoverer)
 	r.Post("/test", h.LocationHandler)
 	http.ListenAndServe("localhost:8000", r)
 }
