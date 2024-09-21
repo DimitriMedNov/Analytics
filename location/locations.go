@@ -1,6 +1,8 @@
 package location
 
 import (
+	"analytics/dbgen"
+	"context"
 	"encoding/json"
 	"net/http"
 
@@ -8,8 +10,8 @@ import (
 )
 
 type locationInput struct {
-	Lat  float64 `json:"lat"`
-	Long float64 `json:"long"`
+	Lat  int64 `json:"lat"`
+	Long int64 `json:"long"`
 }
 
 type Handler struct{ Pool *pgxpool.Pool }
@@ -23,7 +25,12 @@ func (h Handler) LocationHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response, err := json.Marshal(input)
+	savedValues, err := dbgen.New(h.Pool).CreateLocation(context.Background(), dbgen.CreateLocationParams{
+		Lat:  input.Lat,
+		Long: input.Long,
+	})
+
+	response, err := json.Marshal(savedValues)
 	if err != nil {
 		http.Error(w, "Error processing input", http.StatusInternalServerError)
 		return
