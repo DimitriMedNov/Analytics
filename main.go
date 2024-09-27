@@ -1,7 +1,6 @@
 package main
 
 import (
-	"analytics/location"
 	"context"
 	"log"
 	"net/http"
@@ -18,7 +17,7 @@ func main() {
 	if err != nil {
 		log.Fatal("Cant connect to the db")
 	}
-	h := location.Handler{Pool: pool}
+	h := Handler{Pool: pool}
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 	r.Post("/test", h.LocationHandler)

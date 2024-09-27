@@ -1,4 +1,4 @@
-package location
+package endpoints
 
 import (
 	"analytics/dbgen"
@@ -8,15 +8,12 @@ import (
 	"net/http"
 
 	"github.com/jackc/pgx/v5/pgtype"
-	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type locationInput struct {
 	Lat  int64 `json:"lat"`
 	Long int64 `json:"long"`
 }
-
-type Handler struct{ Pool *pgxpool.Pool }
 
 func (h Handler) LocationHandler(w http.ResponseWriter, r *http.Request) {
 	var input locationInput
