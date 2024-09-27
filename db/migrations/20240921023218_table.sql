@@ -1,8 +1,8 @@
 -- migrate:up
 CREATE TABLE IF NOT EXISTS locations (
     id BIGSERIAL PRIMARY KEY,
-    lat BIGINT NOT NULL,
-    long BIGINT NOT NULL
+    lat NUMERIC(14, 7) NOT NULL,
+    long NUMERIC(14, 7) NOT NULL
 );
 
 -- migrate:down

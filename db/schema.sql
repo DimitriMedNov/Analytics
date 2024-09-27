@@ -14,14 +14,34 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
+-- Name: forms; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.forms (
+    id bigint NOT NULL,
+    name character varying(255) NOT NULL,
+    description text NOT NULL
+);
+
+
+--
+-- Name: forms_questions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.forms_questions (
+    form_id bigint NOT NULL,
+    question_id bigint NOT NULL
+);
+
+
+--
 -- Name: locations; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.locations (
     id bigint NOT NULL,
-    lat numeric(10,8),
-    long numeric(10,8),
-    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+    lat numeric(14,7) NOT NULL,
+    long numeric(14,7) NOT NULL
 );
 
 
@@ -51,6 +71,18 @@ ALTER SEQUENCE public.locations_id_seq OWNED BY public.locations.id;
 CREATE TABLE public.locations_users (
     location_id bigint NOT NULL,
     users_id bigint NOT NULL
+);
+
+
+--
+-- Name: questions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.questions (
+    id bigint NOT NULL,
+    question text NOT NULL,
+    type character varying(255) NOT NULL,
+    options text[]
 );
 
 
@@ -108,11 +140,27 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_
 
 
 --
+-- Name: forms forms_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.forms
+    ADD CONSTRAINT forms_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: locations locations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.locations
     ADD CONSTRAINT locations_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: questions questions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.questions
+    ADD CONSTRAINT questions_pkey PRIMARY KEY (id);
 
 
 --
@@ -132,11 +180,27 @@ ALTER TABLE ONLY public.users
 
 
 --
+-- Name: forms_questions fk_form; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.forms_questions
+    ADD CONSTRAINT fk_form FOREIGN KEY (form_id) REFERENCES public.forms(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
 -- Name: locations_users fk_location; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.locations_users
     ADD CONSTRAINT fk_location FOREIGN KEY (location_id) REFERENCES public.locations(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: forms_questions fk_question; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.forms_questions
+    ADD CONSTRAINT fk_question FOREIGN KEY (question_id) REFERENCES public.questions(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -159,4 +223,7 @@ ALTER TABLE ONLY public.locations_users
 INSERT INTO public.schema_migrations (version) VALUES
     ('20240921015528'),
     ('20240921023218'),
-    ('20240921023954');
+    ('20240921023954'),
+    ('20240927201918'),
+    ('20240927202148'),
+    ('20240927204507');

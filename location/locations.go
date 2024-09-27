@@ -4,8 +4,10 @@ import (
 	"analytics/dbgen"
 	"context"
 	"encoding/json"
+	"math/big"
 	"net/http"
 
+	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -26,8 +28,8 @@ func (h Handler) LocationHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	savedValues, err := dbgen.New(h.Pool).CreateLocation(context.Background(), dbgen.CreateLocationParams{
-		Lat:  input.Lat,
-		Long: input.Long,
+		Lat:  pgtype.Numeric{Int: big.NewInt(input.Lat), Exp: -7},
+		Long: pgtype.Numeric{Int: big.NewInt(input.Long), Exp: -7},
 	})
 
 	response, err := json.Marshal(savedValues)
