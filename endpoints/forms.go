@@ -12,7 +12,7 @@ type QuestionInput struct {
 	Type     string `json:"type"`
 }
 
-func (h Handler) createQuestion(w http.ResponseWriter, r *http.Request) {
+func (h Handler) CreateQuestion(w http.ResponseWriter, r *http.Request) {
 	var input QuestionInput
 
 	err := json.NewDecoder(r.Body).Decode(&input)
