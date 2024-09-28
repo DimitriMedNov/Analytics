@@ -10,42 +10,19 @@ import (
 )
 
 const createQuestion = `-- name: CreateQuestion :one
-INSERT INTO questions (
-    question, answer_type
-) VALUES ($1, $2) RETURNING id, question, answer_type, options
+INSERT INTO questions (question, answer_type, options)
+VALUES ($1, $2, $3)
+RETURNING id, question, answer_type, options
 `
 
 type CreateQuestionParams struct {
 	Question   string
 	AnswerType string
-}
-
-func (q *Queries) CreateQuestion(ctx context.Context, arg CreateQuestionParams) (Question, error) {
-	row := q.db.QueryRow(ctx, createQuestion, arg.Question, arg.AnswerType)
-	var i Question
-	err := row.Scan(
-		&i.ID,
-		&i.Question,
-		&i.AnswerType,
-		&i.Options,
-	)
-	return i, err
-}
-
-const createQuestionWithOpts = `-- name: CreateQuestionWithOpts :one
-INSERT INTO questions (
-    question, answer_type, options
-) VALUES ($1, $2, $3) RETURNING id, question, answer_type, options
-`
-
-type CreateQuestionWithOptsParams struct {
-	Question   string
-	AnswerType string
 	Options    []string
 }
 
-func (q *Queries) CreateQuestionWithOpts(ctx context.Context, arg CreateQuestionWithOptsParams) (Question, error) {
-	row := q.db.QueryRow(ctx, createQuestionWithOpts, arg.Question, arg.AnswerType, arg.Options)
+func (q *Queries) CreateQuestion(ctx context.Context, arg CreateQuestionParams) (Question, error) {
+	row := q.db.QueryRow(ctx, createQuestion, arg.Question, arg.AnswerType, arg.Options)
 	var i Question
 	err := row.Scan(
 		&i.ID,

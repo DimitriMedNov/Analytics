@@ -9,8 +9,9 @@ import (
 )
 
 type QuestionInput struct {
-	Question   string `json:"question"`
-	AnswerType string `json:"answer_type"`
+	Question   string   `json:"question"`
+	AnswerType string   `json:"answer_type"`
+	Options    []string `json:"options"`
 }
 
 func (h Handler) CreateQuestion(w http.ResponseWriter, r *http.Request) {
@@ -25,6 +26,7 @@ func (h Handler) CreateQuestion(w http.ResponseWriter, r *http.Request) {
 	qCreated, err := dbgen.New(h.Pool).CreateQuestion(context.Background(), dbgen.CreateQuestionParams{
 		Question:   input.Question,
 		AnswerType: input.AnswerType,
+		Options:    input.Options,
 	})
 	if err != nil {
 		log.Println("Error inserting to the DB:", err)

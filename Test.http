@@ -14,7 +14,8 @@ Content-Type: application/json
 
 {
   "question": "Hola?",
-  "answer_type": "text"
+  "answer_type": "text",
+  "options": ["1", "2"]
 }
 ###
 
