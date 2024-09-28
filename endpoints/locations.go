@@ -2,7 +2,6 @@ package endpoints
 
 import (
 	"analytics/dbgen"
-	"context"
 	"encoding/json"
 	"math/big"
 	"net/http"
@@ -24,7 +23,7 @@ func (h Handler) LocationHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	savedValues, err := dbgen.New(h.Pool).CreateLocation(context.Background(), dbgen.CreateLocationParams{
+	savedValues, err := dbgen.New(h.Pool).CreateLocation(r.Context(), dbgen.CreateLocationParams{
 		Lat:  pgtype.Numeric{Int: big.NewInt(input.Lat), Exp: -7},
 		Long: pgtype.Numeric{Int: big.NewInt(input.Long), Exp: -7},
 	})
@@ -36,5 +35,6 @@ func (h Handler) LocationHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
 	w.Write(response)
 }

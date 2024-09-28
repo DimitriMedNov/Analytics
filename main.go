@@ -21,7 +21,7 @@ func main() {
 	h := endpoints.Handler{Pool: pool}
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
-	r.Post("/test", h.LocationHandler)
+	r.Post("/location", h.LocationHandler)
 	log.Printf("Listening on http://localhost:8000")
 	err = http.ListenAndServe("localhost:8000", r)
 	if err != nil {

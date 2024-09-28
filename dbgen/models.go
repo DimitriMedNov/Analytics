@@ -31,10 +31,10 @@ type LocationsUser struct {
 }
 
 type Question struct {
-	ID       int64
-	Question string
-	Type     string
-	Options  []string
+	ID         int64
+	Question   string
+	AnswerType string
+	Options    []string
 }
 
 type User struct {

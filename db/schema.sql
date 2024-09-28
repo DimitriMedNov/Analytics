@@ -81,7 +81,7 @@ CREATE TABLE public.locations_users (
 CREATE TABLE public.questions (
     id bigint NOT NULL,
     question text NOT NULL,
-    type character varying(255) NOT NULL,
+    answer_type character varying(255) NOT NULL,
     options text[]
 );
 
