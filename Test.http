@@ -1,7 +1,6 @@
 @base_url = http://localhost:8000
 
-### GET request to example server
-POST {{base_url}}/test
+POST {{base_url}}/locations
 Content-Type: application/json
 
 {
@@ -9,3 +8,13 @@ Content-Type: application/json
   "long": 56.78
 }
 ###
+
+POST {{base_url}}/question
+Content-Type: application/json
+
+{
+  "question": "Hola?",
+  "answer_type": "text"
+}
+###
+

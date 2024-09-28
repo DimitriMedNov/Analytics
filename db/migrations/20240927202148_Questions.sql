@@ -1,6 +1,6 @@
 -- migrate:up
 CREATE TABLE IF NOT EXISTS questions (
-    id BIGINT NOT NULL,
+    id BIGSERIAL NOT NULL,
     question TEXT NOT NULL,
     answer_type VARCHAR(255) NOT NULL,
     options TEXT[],

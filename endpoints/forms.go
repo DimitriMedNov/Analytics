@@ -2,14 +2,15 @@ package endpoints
 
 import (
 	"analytics/dbgen"
+	"context"
 	"encoding/json"
 	"log"
 	"net/http"
 )
 
 type QuestionInput struct {
-	Question string `json:"question"`
-	Type     string `json:"type"`
+	Question   string `json:"question"`
+	AnswerType string `json:"answer_type"`
 }
 
 func (h Handler) CreateQuestion(w http.ResponseWriter, r *http.Request) {
@@ -21,12 +22,16 @@ func (h Handler) CreateQuestion(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	q_created, err := dbgen.New(h.Pool).CreateQuestion(r.Context(), dbgen.CreateQuestionParams{
+	qCreated, err := dbgen.New(h.Pool).CreateQuestion(context.Background(), dbgen.CreateQuestionParams{
 		Question:   input.Question,
-		AnswerType: input.Type,
+		AnswerType: input.AnswerType,
 	})
+	if err != nil {
+		log.Println("Error inserting to the DB:", err)
+		return
+	}
 
-	response, err := json.Marshal(q_created)
+	response, err := json.Marshal(qCreated)
 	if err != nil {
 		http.Error(w, "Error processing input", http.StatusInternalServerError)
 		return
