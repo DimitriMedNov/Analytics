@@ -1,11 +1,10 @@
 -- migrate:up
-CREATE TABLE IF NOT EXISTS questions (
-    id BIGSERIAL NOT NULL,
-    question TEXT NOT NULL,
-    answer_type VARCHAR(255) NOT NULL,
-    required BOOL NOT NULL DEFAULT FALSE,
-    depends_on BIGINT NULL,
-    CONSTRAINT questions_pkey PRIMARY KEY (id)
+CREATE TYPE answer_type AS ENUM ('text', 'number', 'multiple_choice', 'single_choice');
+CREATE TABLE IF NOT EXISTS questions
+(
+    id          BIGSERIAL    NOT NULL PRIMARY KEY,
+    question    TEXT         NOT NULL,
+    answer_type answer_type NOT NULL
 );
 
 -- migrate:down

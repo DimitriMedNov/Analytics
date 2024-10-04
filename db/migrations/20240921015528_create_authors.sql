@@ -1,7 +1,8 @@
 -- migrate:up
-CREATE TABLE IF NOT EXISTS users (
-    id BIGSERIAL PRIMARY KEY,
-    name TEXT NOT NULL,
+CREATE TABLE IF NOT EXISTS users
+(
+    id    BIGSERIAL PRIMARY KEY,
+    name  TEXT NOT NULL,
     admin BOOL DEFAULT false
 );
 
