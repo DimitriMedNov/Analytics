@@ -25,7 +25,7 @@ func main() {
 	r.Post("/question", h.CreateQuestion)
 	r.Get("/health", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(200) })
 	log.Printf("Listening on http://0.0.0.0:8080")
-	err = http.ListenAndServe("localhost:8080", r)
+	err = http.ListenAndServe("0.0.0.0:8080", r)
 	if err != nil {
 		log.Println(err)
 	}
