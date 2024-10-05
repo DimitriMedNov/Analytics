@@ -7,28 +7,239 @@ package dbgen
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
-const createQuestion = `-- name: CreateQuestion :one
-INSERT INTO questions (question, answer_type, options)
+const createAnswer = `-- name: CreateAnswer :one
+INSERT INTO answers (id, value, form_id, question_id)
+VALUES ($1, $2, $3, $4)
+RETURNING id, value, form_id, question_id
+`
+
+type CreateAnswerParams struct {
+	ID         int64
+	Value      string
+	FormID     int64
+	QuestionID int64
+}
+
+func (q *Queries) CreateAnswer(ctx context.Context, arg CreateAnswerParams) (Answer, error) {
+	row := q.db.QueryRow(ctx, createAnswer,
+		arg.ID,
+		arg.Value,
+		arg.FormID,
+		arg.QuestionID,
+	)
+	var i Answer
+	err := row.Scan(
+		&i.ID,
+		&i.Value,
+		&i.FormID,
+		&i.QuestionID,
+	)
+	return i, err
+}
+
+const createForm = `-- name: CreateForm :one
+INSERT INTO forms (id, name, description)
 VALUES ($1, $2, $3)
-RETURNING id, question, answer_type, options
+RETURNING id, name, description
+`
+
+type CreateFormParams struct {
+	ID          int64
+	Name        string
+	Description string
+}
+
+func (q *Queries) CreateForm(ctx context.Context, arg CreateFormParams) (Form, error) {
+	row := q.db.QueryRow(ctx, createForm, arg.ID, arg.Name, arg.Description)
+	var i Form
+	err := row.Scan(&i.ID, &i.Name, &i.Description)
+	return i, err
+}
+
+const createFormQuestion = `-- name: CreateFormQuestion :one
+INSERT INTO forms_questions (form_id, question_id, required, depends_on)
+VALUES ($1, $2, $3, $4)
+RETURNING form_id, question_id, required, depends_on
+`
+
+type CreateFormQuestionParams struct {
+	FormID     int64
+	QuestionID int64
+	Required   bool
+	DependsOn  pgtype.Int8
+}
+
+func (q *Queries) CreateFormQuestion(ctx context.Context, arg CreateFormQuestionParams) (FormsQuestion, error) {
+	row := q.db.QueryRow(ctx, createFormQuestion,
+		arg.FormID,
+		arg.QuestionID,
+		arg.Required,
+		arg.DependsOn,
+	)
+	var i FormsQuestion
+	err := row.Scan(
+		&i.FormID,
+		&i.QuestionID,
+		&i.Required,
+		&i.DependsOn,
+	)
+	return i, err
+}
+
+const createQuestion = `-- name: CreateQuestion :one
+INSERT INTO questions (question, answer_type)
+VALUES ($1, $2)
+RETURNING id, question, answer_type
 `
 
 type CreateQuestionParams struct {
 	Question   string
-	AnswerType string
-	Options    []string
+	AnswerType AnswerType
 }
 
 func (q *Queries) CreateQuestion(ctx context.Context, arg CreateQuestionParams) (Question, error) {
-	row := q.db.QueryRow(ctx, createQuestion, arg.Question, arg.AnswerType, arg.Options)
+	row := q.db.QueryRow(ctx, createQuestion, arg.Question, arg.AnswerType)
 	var i Question
+	err := row.Scan(&i.ID, &i.Question, &i.AnswerType)
+	return i, err
+}
+
+const deleteAnswer = `-- name: DeleteAnswer :one
+DELETE FROM answers
+WHERE id = $1
+RETURNING id, value, form_id, question_id
+`
+
+func (q *Queries) DeleteAnswer(ctx context.Context, id int64) (Answer, error) {
+	row := q.db.QueryRow(ctx, deleteAnswer, id)
+	var i Answer
 	err := row.Scan(
 		&i.ID,
-		&i.Question,
-		&i.AnswerType,
-		&i.Options,
+		&i.Value,
+		&i.FormID,
+		&i.QuestionID,
+	)
+	return i, err
+}
+
+const deleteForm = `-- name: DeleteForm :one
+DELETE FROM forms
+WHERE id = $1
+RETURNING id, name, description
+`
+
+func (q *Queries) DeleteForm(ctx context.Context, id int64) (Form, error) {
+	row := q.db.QueryRow(ctx, deleteForm, id)
+	var i Form
+	err := row.Scan(&i.ID, &i.Name, &i.Description)
+	return i, err
+}
+
+const deleteFormQuestion = `-- name: DeleteFormQuestion :one
+DELETE FROM forms_questions
+WHERE form_id = $1 AND question_id = $2
+RETURNING form_id, question_id, required, depends_on
+`
+
+type DeleteFormQuestionParams struct {
+	FormID     int64
+	QuestionID int64
+}
+
+func (q *Queries) DeleteFormQuestion(ctx context.Context, arg DeleteFormQuestionParams) (FormsQuestion, error) {
+	row := q.db.QueryRow(ctx, deleteFormQuestion, arg.FormID, arg.QuestionID)
+	var i FormsQuestion
+	err := row.Scan(
+		&i.FormID,
+		&i.QuestionID,
+		&i.Required,
+		&i.DependsOn,
+	)
+	return i, err
+}
+
+const updateAnswer = `-- name: UpdateAnswer :one
+UPDATE answers
+SET value = $2, form_id = $3, question_id = $4
+WHERE id = $1
+RETURNING id, value, form_id, question_id
+`
+
+type UpdateAnswerParams struct {
+	ID         int64
+	Value      string
+	FormID     int64
+	QuestionID int64
+}
+
+func (q *Queries) UpdateAnswer(ctx context.Context, arg UpdateAnswerParams) (Answer, error) {
+	row := q.db.QueryRow(ctx, updateAnswer,
+		arg.ID,
+		arg.Value,
+		arg.FormID,
+		arg.QuestionID,
+	)
+	var i Answer
+	err := row.Scan(
+		&i.ID,
+		&i.Value,
+		&i.FormID,
+		&i.QuestionID,
+	)
+	return i, err
+}
+
+const updateForm = `-- name: UpdateForm :one
+UPDATE forms
+SET name = $2, description = $3
+WHERE id = $1
+RETURNING id, name, description
+`
+
+type UpdateFormParams struct {
+	ID          int64
+	Name        string
+	Description string
+}
+
+func (q *Queries) UpdateForm(ctx context.Context, arg UpdateFormParams) (Form, error) {
+	row := q.db.QueryRow(ctx, updateForm, arg.ID, arg.Name, arg.Description)
+	var i Form
+	err := row.Scan(&i.ID, &i.Name, &i.Description)
+	return i, err
+}
+
+const updateFormQuestion = `-- name: UpdateFormQuestion :one
+UPDATE forms_questions
+SET required = $3, depends_on = $4
+WHERE form_id = $1 AND question_id = $2
+RETURNING form_id, question_id, required, depends_on
+`
+
+type UpdateFormQuestionParams struct {
+	FormID     int64
+	QuestionID int64
+	Required   bool
+	DependsOn  pgtype.Int8
+}
+
+func (q *Queries) UpdateFormQuestion(ctx context.Context, arg UpdateFormQuestionParams) (FormsQuestion, error) {
+	row := q.db.QueryRow(ctx, updateFormQuestion,
+		arg.FormID,
+		arg.QuestionID,
+		arg.Required,
+		arg.DependsOn,
+	)
+	var i FormsQuestion
+	err := row.Scan(
+		&i.FormID,
+		&i.QuestionID,
+		&i.Required,
+		&i.DependsOn,
 	)
 	return i, err
 }

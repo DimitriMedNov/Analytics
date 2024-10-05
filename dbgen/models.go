@@ -5,8 +5,62 @@
 package dbgen
 
 import (
+	"database/sql/driver"
+	"fmt"
+
 	"github.com/jackc/pgx/v5/pgtype"
 )
+
+type AnswerType string
+
+const (
+	AnswerTypeText           AnswerType = "text"
+	AnswerTypeNumber         AnswerType = "number"
+	AnswerTypeMultipleChoice AnswerType = "multiple_choice"
+	AnswerTypeSingleChoice   AnswerType = "single_choice"
+)
+
+func (e *AnswerType) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = AnswerType(s)
+	case string:
+		*e = AnswerType(s)
+	default:
+		return fmt.Errorf("unsupported scan type for AnswerType: %T", src)
+	}
+	return nil
+}
+
+type NullAnswerType struct {
+	AnswerType AnswerType
+	Valid      bool // Valid is true if AnswerType is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullAnswerType) Scan(value interface{}) error {
+	if value == nil {
+		ns.AnswerType, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.AnswerType.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullAnswerType) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.AnswerType), nil
+}
+
+type Answer struct {
+	ID         int64
+	Value      string
+	FormID     int64
+	QuestionID int64
+}
 
 type Form struct {
 	ID          int64
@@ -17,6 +71,8 @@ type Form struct {
 type FormsQuestion struct {
 	FormID     int64
 	QuestionID int64
+	Required   bool
+	DependsOn  pgtype.Int8
 }
 
 type Location struct {
@@ -30,11 +86,20 @@ type LocationsUser struct {
 	UsersID    int64
 }
 
+type Option struct {
+	ID    int64
+	Value string
+}
+
 type Question struct {
 	ID         int64
 	Question   string
-	AnswerType string
-	Options    []string
+	AnswerType AnswerType
+}
+
+type QuestionOption struct {
+	OptionID   int64
+	QuestionID int64
 }
 
 type User struct {
