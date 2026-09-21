@@ -1,6 +1,6 @@
 # Analytics MX — API
 
-Backend de **Analytics MX**, la plataforma de encuestas de Grupo Megamedia. Expone la API que usan el panel web y la app móvil de captura en campo.
+Backend de **Analytics MX**, una plataforma de encuestas hecha por encargo. Expone la API que usan el panel web y la app móvil de captura en campo.
 
 ## Qué resuelve
 
